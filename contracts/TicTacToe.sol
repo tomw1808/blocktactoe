@@ -60,7 +60,7 @@ contract TicTacToe {
         gameActive = false;
         //emit an event
         GameOverWithWin(player);
-        uint balanceToPayOut = this.balance;
+        uint balanceToPayOut = address(this).balance;
         if(player.send(balanceToPayOut) != true) {
             if(player == player1) {
                 balanceToWithdrawPlayer1 = balanceToPayOut;
@@ -95,7 +95,7 @@ contract TicTacToe {
         gameActive = false;
         GameOverWithDraw();
 
-        uint balanceToPayOut = this.balance/2;
+        uint balanceToPayOut = address(this).balance/2;
 
         if(player1.send(balanceToPayOut) == false) {
             balanceToWithdrawPlayer1 += balanceToPayOut;
