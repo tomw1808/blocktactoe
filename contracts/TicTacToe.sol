@@ -1,4 +1,4 @@
-pragma solidity ^0.4.18;
+pragma solidity ^0.4.23;
 
 contract TicTacToe {
     uint constant public gameCost = 0.1 ether;
@@ -27,7 +27,7 @@ contract TicTacToe {
     event GameOverWithDraw();
     event PayoutSuccess(address receiver, uint amountInWei);
 
-    function TicTacToe() public payable {
+    constructor() public payable {
         player1 = msg.sender;
         require(msg.value == gameCost);
         gameValidUntil = now+timeToReact;
@@ -40,7 +40,7 @@ contract TicTacToe {
         require(msg.value == gameCost);
 
         player2 = msg.sender;
-        PlayerJoined(player2);
+        emit PlayerJoined(player2);
         if(block.number % 2 == 0) {
             activePlayer = player2;
         } else {
@@ -49,7 +49,7 @@ contract TicTacToe {
 
         gameValidUntil = now + timeToReact;
 
-        NextPlayer(activePlayer);
+        emit NextPlayer(activePlayer);
     }
 
     function getBoard() public view returns(address[3][3]) {
@@ -59,7 +59,7 @@ contract TicTacToe {
     function setWinner(address player) private {
         gameActive = false;
         //emit an event
-        GameOverWithWin(player);
+        emit GameOverWithWin(player);
         uint balanceToPayOut = address(this).balance;
         if(player.send(balanceToPayOut) != true) {
             if(player == player1) {
@@ -68,7 +68,7 @@ contract TicTacToe {
                 balanceToWithdrawPlayer2 = balanceToPayOut;
             }
         } else {
-            PayoutSuccess(player, balanceToPayOut);
+            emit PayoutSuccess(player, balanceToPayOut);
         }
         //transfer money to the winner
     }
@@ -81,32 +81,32 @@ contract TicTacToe {
             balanceToWithdrawPlayer1 = 0;
             player1.transfer(balanceToTransfer);
 
-            PayoutSuccess(player1, balanceToTransfer);
+            emit PayoutSuccess(player1, balanceToTransfer);
         } else {
 
             require(balanceToWithdrawPlayer2 > 0);
             balanceToTransfer = balanceToWithdrawPlayer2;
             balanceToWithdrawPlayer2 = 0;
             player2.transfer(balanceToTransfer);
-            PayoutSuccess(player2, balanceToTransfer);
+            emit PayoutSuccess(player2, balanceToTransfer);
         }
     }
 
     function setDraw() private {
         gameActive = false;
-        GameOverWithDraw();
+        emit GameOverWithDraw();
 
         uint balanceToPayOut = address(this).balance/2;
 
         if(player1.send(balanceToPayOut) == false) {
             balanceToWithdrawPlayer1 += balanceToPayOut;
         } else {
-            PayoutSuccess(player1, balanceToPayOut);
+            emit PayoutSuccess(player1, balanceToPayOut);
         }
         if(player2.send(balanceToPayOut) == false) {
             balanceToWithdrawPlayer2 += balanceToPayOut;
         } else {
-            PayoutSuccess(player2, balanceToPayOut);
+            emit PayoutSuccess(player2, balanceToPayOut);
         }
 
     }
@@ -196,6 +196,6 @@ contract TicTacToe {
         } else {
             activePlayer = player1;
         }
-        NextPlayer(activePlayer);
+        emit NextPlayer(activePlayer);
     }
 }
