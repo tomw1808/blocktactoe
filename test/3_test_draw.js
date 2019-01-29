@@ -5,9 +5,9 @@ contract("TicTacToe", function(accounts) {
     var ticTacToeInstance;
     var playerOne = accounts[0];
     var playerTwo = accounts[1];
-    return TicTacToe.new({from: playerOne, value: web3.toWei(0.1, "ether")}).then(function(instance ) {
+    return TicTacToe.new({from: playerOne, value: web3.utils.toWei("0.1", "ether")}).then(function(instance ) {
       ticTacToeInstance = instance;
-      return ticTacToeInstance.joinGame({from:playerTwo, value:web3.toWei(0.1, "ether")});
+      return ticTacToeInstance.joinGame({from:playerTwo, value:web3.utils.toWei("0.1", "ether")});
     }).then(txResult => {
       return ticTacToeInstance.setStone(0,0,{from: txResult.logs[1].args.player});
     }).then(txResult => {
