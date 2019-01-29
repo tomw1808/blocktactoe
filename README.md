@@ -1,4 +1,5 @@
 # Introduction
+## CODE UPDATED Jan 29, 2019 -- SEE UPDATES SECTION BELOW!
 This is the official repository for the Course "Ethereum Game Development: Build A Game On The Blockchain". In this course you learn how to build a simple, but fun game that runs on the blockchain from scratch: Tic Tac Toe.
 
 We will cover everything from A to Z:
@@ -24,11 +25,17 @@ Then go to https://tomw1808.github.io/blocktactoe/
 4. `cd blocktactoe`
 5. `npm install`
 6. `npm install -g truffle`
-7. `truffle develop`
-8. Open a _second_ Terminal/Command Line in the same folder and type in
-9. `npm run dev`
-10. Then open your browser
+7. `npm install -g ganache-cli`
+8. Open Ganache: `ganache-cli`
+9. Open a _second_ Terminal/Command Line in the same folder and type in
+10. `truffle migrate` to deploy the smart contracts on Ganache
+11. `npm run dev` to start the webpack dev server
+12. Then open your browser
 
 # Questions/Suggestions?
 
 Feel free to reach out any time! Best is the Course Q&A Forum where dedicated staff is helping out.
+
+# UPDATES Jan 29, 2019
+
+All the code was updated to work with the latest Truffle 5 and Solidtiy 0.5.2. There is a minor warning about an older Webpack-dev-server which can be ignored for now.

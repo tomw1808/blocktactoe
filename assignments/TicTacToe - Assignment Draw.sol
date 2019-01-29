@@ -1,4 +1,4 @@
-pragma solidity ^0.4.19;
+pragma solidity ^0.5.0;
 
 contract TicTacToe {
     uint8 public boardSize = 3;
@@ -10,7 +10,7 @@ contract TicTacToe {
     
     address activePlayer;
     
-    function TicTacToe() public {
+    constructor() public {
         player1 = msg.sender;
     }
     
@@ -20,15 +20,15 @@ contract TicTacToe {
         activePlayer = player2;
     }
     
-    function getBoard() public view returns(address[3][3]) {
+    function getBoard() public view returns(address[3][3] memory) {
         return board;
     }
     
     function setStone(uint8 x, uint8 y) public {
-        require(board[x][y] == address(0));
+        require(board[x][y] == address(0), "Field not empty, aborting");
         assert(x < boardSize);
         assert(y < boardSize);
-        require(msg.sender == activePlayer);
+        require(msg.sender == activePlayer, "Player not the active player, aborting");
         board[x][y] = msg.sender;
         
         for(uint8 i = 0; i < boardSize; i++) {
@@ -40,7 +40,7 @@ contract TicTacToe {
                 //winner
             }
         }
-        for(i = 0; i < boardSize; i++) {
+        for(uint i = 0; i < boardSize; i++) {
             if(board[x][i] != activePlayer) {
                 break;
             }
@@ -53,7 +53,7 @@ contract TicTacToe {
         
         //diagonale
         if(x == y) {
-            for(i = 0; i < boardSize; i++) {
+            for(uint i = 0; i < boardSize; i++) {
                 if(board[i][i] != activePlayer) {
                     break;
                 }
@@ -66,7 +66,7 @@ contract TicTacToe {
         
         //anti-diagonale
         if((x+y) == boardSize-1) {
-            for(i = 0; i < boardSize; i++) {
+            for(uint i = 0; i < boardSize; i++) {
                 if(board[i][(boardSize-1)-i] != activePlayer) {
                     break;
                 }

@@ -1,4 +1,4 @@
-pragma solidity ^0.4.19;
+pragma solidity ^0.5.0;
 
 contract TicTacToe {
     uint8 public boardSize = 3;
@@ -16,7 +16,7 @@ contract TicTacToe {
     event PlayerJoined(address player);
     event NextPlayer(address player);
     
-    function TicTacToe() public {
+    constructor() public {
         player1 = msg.sender;
     }
     
@@ -24,16 +24,16 @@ contract TicTacToe {
         assert(player2 == address(0));
         gameActive = true;
         player2 = msg.sender;
-        PlayerJoined(player2);
+        emit PlayerJoined(player2);
         if(block.number % 2 == 0) {
             activePlayer = player2;
         } else {
             activePlayer = player1;
         }
-        NextPlayer(activePlayer);
+        emit NextPlayer(activePlayer);
     }
     
-    function getBoard() public view returns(address[3][3]) {
+    function getBoard() public view returns(address[3][3] memory) {
         return board;
     }
     
@@ -48,13 +48,11 @@ contract TicTacToe {
     }
     
     function setStone(uint8 x, uint8 y) public {
-        require(board[x][y] == address(0));
-        assert(gameActive);
+        require(board[x][y] == address(0), "Field not empty, aborting");
         assert(x < boardSize);
         assert(y < boardSize);
-        require(msg.sender == activePlayer);
+        require(msg.sender == activePlayer, "Player not the active player, aborting");
         board[x][y] = msg.sender;
-        movesCounter++;
         
         for(uint8 i = 0; i < boardSize; i++) {
             if(board[i][y] != activePlayer) {
@@ -63,11 +61,9 @@ contract TicTacToe {
             //win
             if(i == boardSize - 1) {
                 //winner
-                setWinner(activePlayer);
-                return;
             }
         }
-        for(i = 0; i < boardSize; i++) {
+        for(uint i = 0; i < boardSize; i++) {
             if(board[x][i] != activePlayer) {
                 break;
             }
@@ -75,29 +71,25 @@ contract TicTacToe {
             
             if(i == boardSize - 1) {
                 //winner
-                setWinner(activePlayer);
-                return;
             }
         }
         
         //diagonale
         if(x == y) {
-            for(i = 0; i < boardSize; i++) {
+            for(uint i = 0; i < boardSize; i++) {
                 if(board[i][i] != activePlayer) {
                     break;
                 }
                 //win
                 if(i == boardSize - 1) {
                     //winner
-                    setWinner(activePlayer);
-                    return;
                 }
             }
         }
         
         //anti-diagonale
         if((x+y) == boardSize-1) {
-            for(i = 0; i < boardSize; i++) {
+            for(uint i = 0; i < boardSize; i++) {
                 if(board[i][(boardSize-1)-i] != activePlayer) {
                     break;
                 }
@@ -105,24 +97,17 @@ contract TicTacToe {
                 
                 if(i == boardSize - 1) {
                     //winner
-                    setWinner(activePlayer);
-                    return;
                 }
             }
         }
         
         //draw
-        if(movesCounter == (boardSize**2)) {
-            //draw
-            setDraw();
-            return;
-        }
         
         if(activePlayer == player1) {
             activePlayer = player2;
         } else {
             activePlayer = player1;
         }
-        NextPlayer(activePlayer);
+        emit NextPlayer(activePlayer);
     }
 }

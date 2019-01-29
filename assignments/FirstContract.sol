@@ -1,4 +1,4 @@
-pragma solidity ^0.4.19;
+pragma solidity ^0.5.0;
 
 contract TicTacToe {
     bool public myBool = false;
@@ -25,7 +25,7 @@ contract TicTacToe {
     
     uint timeStamp;
     
-    function TicTacToe() public {
+    constructor() public {
         myAddress = msg.sender;
         someValue.counter = 5;
         someValue.from = msg.sender;
@@ -37,24 +37,26 @@ contract TicTacToe {
     }
     
     function setMyUint8(uint8 myUintArgument) public {
-        require(msg.sender == myAddress);
+        require(msg.sender == myAddress, "Address not MyAddress");
         //uint daysMustHaveBeenPass = 5;
         //require((timeStamp + (daysMustHaveBeenPass * 1 days)) < now);
-        require((timeStamp + 10 seconds) < now);
+        require((timeStamp + 10 seconds) < now, "Some time must pass");
         myUint8 = myUintArgument;
-        MyEvent(myUint8);
+        emit MyEvent(myUint8);
     }
     
     
-    function getSomeValueArray() public view returns(MyStruct[2]) {
+    /** This does not work anymore in Solidity 0.5.0, I had to remove it! */
+    /*
+    function getSomeValueArray() public view returns(MyStruct[2] memory) {
         return someValueArray;
-    }
+    }*/
     
     function increase() public {
         someValue.counter++;
     }
     
-    function getBoard() public view returns(uint[3][3]) {
+    function getBoard() public view returns(uint[3][3] memory) {
         return board;
     }
     
@@ -63,7 +65,7 @@ contract TicTacToe {
     }
     
     function withdrawal() public {
-        msg.sender.transfer(this.balance);
+        msg.sender.transfer(address(this).balance);
     }
     
     function setMyBoolean(bool myBoolArgument) public {

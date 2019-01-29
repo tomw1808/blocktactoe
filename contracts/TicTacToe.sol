@@ -1,17 +1,17 @@
-pragma solidity ^0.4.23;
+pragma solidity ^0.5.0;
 
 contract TicTacToe {
     uint constant public gameCost = 0.1 ether;
-
+    
     uint8 public boardSize = 3;
     uint8 movesCounter;
-
+    
     bool gameActive;
-
+    
     address[3][3] board;
-
-    address public player1;
-    address public player2;
+    
+    address payable public player1;
+    address payable public player2;
 
     uint balanceToWithdrawPlayer1;
     uint balanceToWithdrawPlayer2;
@@ -19,7 +19,7 @@ contract TicTacToe {
     uint timeToReact = 3 minutes;
     uint gameValidUntil;
 
-    address activePlayer;
+    address payable activePlayer;
 
     event PlayerJoined(address player);
     event NextPlayer(address player);
@@ -29,7 +29,7 @@ contract TicTacToe {
 
     constructor() public payable {
         player1 = msg.sender;
-        require(msg.value == gameCost);
+        require(msg.value == gameCost, "Submit some money, aborting");
         gameValidUntil = now+timeToReact;
     }
 
@@ -52,15 +52,19 @@ contract TicTacToe {
         emit NextPlayer(activePlayer);
     }
 
-    function getBoard() public view returns(address[3][3]) {
+    function getBoard() public view returns(address[3][3] memory) {
         return board;
     }
 
-    function setWinner(address player) private {
+    function setWinner(address payable player) private {
         gameActive = false;
         //emit an event
         emit GameOverWithWin(player);
         uint balanceToPayOut = address(this).balance;
+         /**
+        * In Real-World application consider removing the player.send part completely and let the player
+        * Withdraw the money later on!
+         */
         if(player.send(balanceToPayOut) != true) {
             if(player == player1) {
                 balanceToWithdrawPlayer1 = balanceToPayOut;
@@ -140,7 +144,7 @@ contract TicTacToe {
                 return;
             }
         }
-        for(i = 0; i < boardSize; i++) {
+        for(uint i = 0; i < boardSize; i++) {
             if(board[x][i] != activePlayer) {
                 break;
             }
@@ -155,7 +159,7 @@ contract TicTacToe {
 
         //diagonale
         if(x == y) {
-            for(i = 0; i < boardSize; i++) {
+            for(uint i = 0; i < boardSize; i++) {
                 if(board[i][i] != activePlayer) {
                     break;
                 }
@@ -170,7 +174,7 @@ contract TicTacToe {
 
         //anti-diagonale
         if((x+y) == boardSize-1) {
-            for(i = 0; i < boardSize; i++) {
+            for(uint i = 0; i < boardSize; i++) {
                 if(board[i][(boardSize-1)-i] != activePlayer) {
                     break;
                 }
